@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      width: 280px; margin: 0; padding: 14px;
+      font: 13px/1.4 system-ui, sans-serif; color: #e5e7eb;
+      background: #111827;
+    }
+    .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    h1 { font-size: 13px; margin: 0; color: #a78bfa; letter-spacing: .4px; }
+    .chip {
+      font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 999px;
+    }
+    .chip.ltr { background: #1f2937; color: #9ca3af; }
+    .chip.rtl { background: #451a03; color: #fbbf24; border: 1px solid #92400e; }
+    button {
+      padding: 9px 10px; border: 0; border-radius: 8px; cursor: pointer;
+      font: 600 13px system-ui, sans-serif; width: 100%; margin-bottom: 8px;
+    }
+    #toggle { background: #7c3aed; color: #fff; }
+    #toggle:hover { background: #6d28d9; }
+    #toggle.rtl { background: #b45309; }
+    #toggle.rtl:hover { background: #92400e; }
+    #audit { background: #374151; color: #e5e7eb; }
+    #audit:hover { background: #4b5563; }
+    #copy { background: #374151; color: #e5e7eb; display: none; }
+    #copy:hover { background: #4b5563; }
+    label.opt {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0; cursor: pointer; color: #d1d5db;
+    }
+    input[type="checkbox"] { accent-color: #7c3aed; }
+    #stats { margin-top: 8px; font-size: 12px; color: #9ca3af; min-height: 16px; }
+    #stats b.err { color: #f87171; }
+    #stats b.warn { color: #fbbf24; }
+    #stats b.info { color: #9ca3af; }
+    .hint { margin-top: 8px; font-size: 11px; color: #6b7280; }
+    kbd { background: #1f2937; border-radius: 4px; padding: 1px 5px; font-size: 10px; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1>UA RTL AUDIT</h1>
+    <span class="chip ltr" id="state">LTR</span>
+  </div>
+  <button id="toggle">Flip to RTL</button>
+  <button id="audit">Run audit</button>
+  <button id="copy">Copy markdown report</button>
+  <label class="opt">Also set <b>lang="ar"</b> while flipped <input id="langAr" type="checkbox" /></label>
+  <div id="stats"></div>
+  <div class="hint">Shortcut: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>, or right-click the page.</div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

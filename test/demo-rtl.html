@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>UA Projects — RTL audit demo</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5e7eb; background: #111827; }
+    header { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: #1f2937; border-bottom: 1px solid #374151; }
+    .logo { font-weight: 700; color: #a78bfa; letter-spacing: .5px; }
+    main { padding: 24px 18px; max-width: 720px; }
+    .card { background: #1f2937; border: 1px solid #374151; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 8px; font-size: 13px; color: #a78bfa; }
+    .row { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    input { background: #111827; color: #e5e7eb; border: 1px solid #374151; border-radius: 6px; padding: 6px 9px; font: 13px system-ui; }
+
+    /* --- deliberate RTL defects (one per audit check) --- */
+    .trunc { width: 140px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .price { text-align: right; }
+    .clipper { position: relative; overflow: hidden; height: 44px; }
+    .offscreen { position: absolute; right: -100px; top: 0; width: 120px; padding: 8px; background: #7f1d1d; border-radius: 8px; }
+    .icon { display: inline-block; }
+    #overflowMaker { width: 2000px; height: 10px; }
+    .hidden-box { display: none; width: 3000px; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="logo">UA PROJECTS</span>
+    <span style="font-size:12px;color:#9ca3af">RTL audit demo — five planted defects + one on demand</span>
+  </header>
+  <main>
+    <div class="card">
+      <h3>Truncated text (warn)</h3>
+      <div class="trunc">Project Alpha — Q3 financial consolidation and audit trail review</div>
+    </div>
+    <div class="card">
+      <h3>Physical alignment (info)</h3>
+      <div class="price">EGP 1,250.00</div>
+    </div>
+    <div class="card">
+      <h3>Direction-sensitive inputs (warn)</h3>
+      <div class="row">
+        <input type="tel" name="phone" placeholder="tel, no dir" />
+        <input type="number" name="qty" placeholder="number, no dir" />
+        <input type="tel" name="pinned" dir="ltr" placeholder="tel, pinned" />
+      </div>
+    </div>
+    <div class="card">
+      <h3>Directional icons (info)</h3>
+      <span class="icon icon-arrow-right" title="Next">→</span>
+      <span class="icon" aria-label="chevron-left">‹</span>
+      <span class="icon icon-bolt">⚡</span>
+    </div>
+    <div class="card">
+      <h3>Clipped element (error)</h3>
+      <div class="clipper">
+        <div class="offscreen">I cross the left viewport edge by ~40px, clipped by my ancestor</div>
+      </div>
+    </div>
+    <div class="hidden-box">invisible, must never be flagged</div>
+    <div id="overflow-slot"></div>
+  </main>
+  <script>
+    // Test hook: creates/removes the document-wide horizontal overflow.
+    window.__addOverflow = function () {
+      if (!document.getElementById('overflowMaker')) {
+        const d = document.createElement('div');
+        d.id = 'overflowMaker';
+        document.getElementById('overflow-slot').appendChild(d);
+      }
+    };
+  </script>
+</body>
+</html>

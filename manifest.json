@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "UA RTL Audit",
+  "short_name": "UA RTL Audit",
+  "version": "1.0.0",
+  "description": "One keystroke flips any page to RTL and audits it for direction bugs: viewport overflow, clipping, truncated text, physical alignment, unmirrored inputs and icons.",
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "UA RTL Audit (Alt+Shift+R to flip direction)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-rtl": {
+      "suggested_key": {
+        "default": "Alt+Shift+R"
+      },
+      "description": "Flip the current page between LTR and RTL"
+    }
+  }
+}
