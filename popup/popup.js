@@ -1,10 +1,12 @@
 // Popup logic: reflects the page's flip state, delegates flip/audit to the
 // service worker (which owns tab access), and copies the markdown report
 // with the popup's own user gesture.
+import { request, pageTab, showError, errorMessage } from '../shared/runtime.js';
 const $ = (id) => document.getElementById(id);
+let targetId = null;
 
 function send(type, extra) {
-  return chrome.runtime.sendMessage(Object.assign({ type }, extra || {})).catch(() => null);
+  return request(type, { tabId: targetId, ...extra });
 }
 
 let lastReport = null;
@@ -12,7 +14,7 @@ let lastReport = null;
 function renderState(res) {
   const chip = $('state');
   const btn = $('toggle');
-  if (!res) {
+  if (!res || res.error) {
     chip.textContent = '—';
     chip.className = 'chip ltr';
     return;
@@ -33,7 +35,7 @@ function renderState(res) {
 function renderSummary(res) {
   const el = $('stats');
   if (!res || !res.summary) {
-    el.textContent = 'Could not run on this page (try a normal http(s) page).';
+    showError(el, res, 'Could not run on this page.');
     return;
   }
   const s = res.summary;
@@ -43,9 +45,12 @@ function renderSummary(res) {
 }
 
 async function init() {
+  targetId = (await pageTab()).id;
   const { langAr } = await chrome.storage.sync.get({ langAr: false });
   $('langAr').checked = !!langAr;
-  renderState(await send('ua-rtl:state'));
+  const state = await send('ua-rtl:state');
+  renderState(state);
+  showError($('stats'), state, 'Could not read the page direction.');
 }
 
 $('langAr').addEventListener('change', () => {
@@ -55,8 +60,9 @@ $('langAr').addEventListener('change', () => {
 $('toggle').addEventListener('click', async () => {
   const res = await send('ua-rtl:toggle', { langAr: $('langAr').checked });
   renderState(res);
-  if (res) $('stats').textContent = res.flipped ? 'Flipped to RTL — audit to see what breaks.' : 'Direction restored.';
-  else $('stats').textContent = 'Could not run on this page (try a normal http(s) page).';
+  if (!showError($('stats'), res, 'Could not run on this page.')) {
+    $('stats').textContent = res.flipped ? 'Flipped to RTL — audit to see what breaks.' : 'Direction restored.';
+  }
 });
 
 $('audit').addEventListener('click', async () => {
@@ -80,4 +86,4 @@ $('copy').addEventListener('click', async () => {
   setTimeout(() => ($('copy').textContent = 'Copy markdown report'), 1500);
 });
 
-init().catch(() => ($('stats').textContent = 'Popup failed to start — try reopening it.'));
+init().catch((e) => ($('stats').textContent = errorMessage(e)));

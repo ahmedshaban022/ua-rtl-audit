@@ -119,7 +119,9 @@
   }
 
   function esc(s) {
-    return String(s == null ? '' : s).replace(/`/g, '`');
+    // backslash-escape backticks so titles/selectors can't break the
+    // markdown code spans in the report
+    return String(s == null ? '' : s).replace(/`/g, '\\`');
   }
 
   function buildReport(issues, meta) {
